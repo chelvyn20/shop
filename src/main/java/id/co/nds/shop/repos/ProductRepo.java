@@ -22,7 +22,7 @@ public interface ProductRepo extends JpaRepository<ProductEntity, String>, JpaSp
     @Modifying
     @Query(value = "UPDATE ms_product SET rec_status = '"
             + GlobalConstant.REC_STATUS_NON_ACTIVE
-            + "', deleted_date = NOW(), deleted_by = ?2 "
+            + "', deleted_time = NOW(), deleted_by = ?2 "
             + "WHERE id = ?1", nativeQuery = true)
     Integer doDelete(String id, Integer deletedBy);
 }

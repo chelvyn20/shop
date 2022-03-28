@@ -98,7 +98,8 @@ public class CustomerController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<ResponseModel> deleteCustomerController(
-            @Validated(DeletingById.class) @RequestBody CustomerModel customerModel) {
+            @Validated(DeletingById.class) @RequestBody CustomerModel customerModel)
+            throws ClientException {
         // request
         CustomerEntity customer = customerService.delete(customerModel);
 

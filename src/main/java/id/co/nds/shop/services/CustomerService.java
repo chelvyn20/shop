@@ -78,9 +78,14 @@ public class CustomerService implements Serializable {
         return customerRepo.save(customer);
     }
 
-    public CustomerEntity delete(CustomerModel customerModel) {
+    public CustomerEntity delete(CustomerModel customerModel) throws ClientException {
         CustomerEntity customer = new CustomerEntity();
         customer = findById(customerModel.getId());
+
+        if (customer.getRecStatus().equalsIgnoreCase(GlobalConstant.REC_STATUS_NON_ACTIVE)) {
+            throw new ClientException(
+                    "Customer id (" + customerModel.getId() + ") is already been deleted.");
+        }
         customer.setRecStatus(GlobalConstant.REC_STATUS_NON_ACTIVE);
         customer.setDeletedTime(DateGenerator.generateTimestamp());
         customer.setDeletedBy(

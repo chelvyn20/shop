@@ -111,8 +111,9 @@ public class ProductService implements Serializable {
         product.setDeletedTime(DateGenerator.generateTimestamp());
         product.setDeletedBy(productModel.getActorId() == null ? 0 : productModel.getActorId());
 
-        productRepo.doDelete(product.getId(), product.getCreatedBy());
-        return product;
         // return productRepo.save(product);
+
+        productRepo.doDelete(product.getId(), product.getDeletedBy());
+        return product;
     }
 }

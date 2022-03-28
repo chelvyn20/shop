@@ -28,16 +28,12 @@ public class ProductModel extends RecordModel {
             PostingNew.class, RequestMethodById.class })
     private String name;
 
-    @NotBlank(message = "Product Price must not be blank", groups = { PostingNew.class })
-    @Size(min = 1, max = 13, message = "Product Price length must be 1 - 13", groups = {
-            PostingNew.class, RequestMethodById.class })
+    @NotNull(message = "Product Price must not be null", groups = { PostingNew.class })
     @PositiveOrZero(message = "Product Stock must not be less than 0", groups = {
             PostingNew.class, RequestMethodById.class })
     private BigDecimal price;
 
     @NotNull(message = "Product Stock must not be null", groups = { PostingNew.class })
-    @Size(min = 1, message = "Product Stock length must not be less than 1", groups = {
-            PostingNew.class, RequestMethodById.class })
     @PositiveOrZero(message = "Product Stock must not be less than 0", groups = {
             PostingNew.class, RequestMethodById.class })
     private Integer stock;
