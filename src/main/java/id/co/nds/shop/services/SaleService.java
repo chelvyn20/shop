@@ -38,40 +38,39 @@ public class SaleService implements Serializable {
     public CustomerRepo customerRepo;
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = { Exception.class })
-    public SaleEntity add(SaleModel saleModel) throws Exception {
-        // validation
+    public SaleEntity addSale(SaleModel saleModel) throws Exception {
+        SaleEntity sale = new SaleEntity();
 
-        // process
-        SaleEntity initSale = new SaleEntity();
+        long seq = saleRepo.count() + 1;
+        sale.setId("S" + DateGenerator.generateTodayCode() + String.format("%03d", seq));
 
-        initSale.setTotalPrice(new BigDecimal("0"));
-        initSale.setTotalQuantity(0);
-        initSale.setCustomer(customerRepo.getById(saleModel.getCustomerId()));
-        initSale.setCreatedTime(DateGenerator.generateTimestamp());
-        initSale.setCreatedBy(saleModel.getCreatedBy() == null ? 0 : saleModel.getCreatedBy());
-
-        return saleRepo.save(initSale);
-    }
-
-    @Transactional(propagation = Propagation.NESTED, rollbackFor = { Exception.class })
-    public SaleEntity addSaleProductList(SaleEntity sale, SaleModel saleModel) throws Exception {
-        // validation
-
-        // process
-        List<SaleProductEntity> saleProductList = new ArrayList<>();
         BigDecimal totalPrice = new BigDecimal("0");
+        sale.setTotalPrice(totalPrice);
+
         Integer totalQuantity = 0;
+        sale.setTotalQuantity(totalQuantity);
+
+        sale.setCustomer(customerRepo.getById(saleModel.getCustomerId()));
+        sale.setCreatedTime(DateGenerator.generateTimestamp());
+        sale.setCreatedBy(saleModel.getActorId() == null ? 0 : saleModel.getActorId());
+
+        List<SaleProductEntity> saleProductList = new ArrayList<>();
 
         for (ItemModel item : saleModel.getItems()) {
             ProductEntity product = productRepo.findById(item.getProductId()).orElse(null);
-            CategoryEntity category = product.getCategory();
-            totalPrice = totalPrice.add(product.getPrice().multiply(new BigDecimal(item.getQuantity())));
+            totalPrice = totalPrice
+                    .add(product.getPrice().multiply(new BigDecimal(item.getQuantity())));
             totalQuantity += item.getQuantity();
+
             product.setStock(product.getStock() - item.getQuantity());
+            product.setUpdatedTime(DateGenerator.generateTimestamp());
+            product.setUpdatedBy(saleModel.getActorId() == null ? 0 : saleModel.getActorId());
             productRepo.save(product);
 
-            SaleProductEntity saleProduct = new SaleProductEntity(sale, product, category, product.getPrice(),
-                    item.getQuantity());
+            CategoryEntity category = product.getCategory();
+
+            SaleProductEntity saleProduct = new SaleProductEntity(sale, product, category,
+                    product.getPrice(), item.getQuantity());
             saleProductList.add(saleProduct);
         }
 

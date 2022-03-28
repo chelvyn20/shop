@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import id.co.nds.shop.entities.ProductEntity;
 import id.co.nds.shop.exceptions.ClientException;
-import id.co.nds.shop.exceptions.NotFoundException;
 import id.co.nds.shop.generators.DateGenerator;
 import id.co.nds.shop.globals.GlobalConstant;
 import id.co.nds.shop.models.ProductModel;
@@ -29,23 +28,11 @@ public class ProductService implements Serializable {
     ProductValidator productValidator = new ProductValidator();
 
     public ProductEntity add(ProductModel productModel) throws ClientException {
-        // validation
-        productValidator.notNullCheckProductId(productModel.getId());
-        productValidator.nullCheckName(productModel.getName());
-        productValidator.validateName(productModel.getName());
-        productValidator.nullCheckPrice(productModel.getPrice());
-        productValidator.validatePrice(productModel.getPrice());
-        productValidator.nullCheckStock(productModel.getStock());
-        productValidator.validateStock(productModel.getStock());
-        productValidator.nullCheckCategoryId(productModel.getCategoryId());
-        productValidator.validateCategoryId(productModel.getCategoryId());
-
         Long count = productRepo.countByName(productModel.getName());
         if (count > 0) {
             throw new ClientException("Product name is already existed");
         }
 
-        // process
         ProductEntity product = new ProductEntity();
         product.setName(productModel.getName());
         product.setPrice(productModel.getPrice());
@@ -73,35 +60,17 @@ public class ProductService implements Serializable {
         return products;
     }
 
-    public ProductEntity findById(String id) throws ClientException, NotFoundException {
-        // validation
-        productValidator.nullCheckProductId(id);
-        productValidator.validateProductId(id);
-
-        // process
-        ProductEntity product = productRepo.findById(id).orElse(null);
-        productValidator.nullCheckObject(product);
+    public ProductEntity findById(String id) {
+        ProductEntity product = productRepo.findById(id).orElseThrow();
 
         return product;
     }
 
-    public ProductEntity edit(ProductModel productModel)
-            throws ClientException, NotFoundException {
-        // validation
-        productValidator.nullCheckProductId(productModel.getId());
-        productValidator.validateProductId(productModel.getId());
-
-        if (!productRepo.existsById(productModel.getId())) {
-            throw new NotFoundException("Cannot find product with id: " + productModel.getId());
-        }
-
-        // process
+    public ProductEntity edit(ProductModel productModel) throws ClientException {
         ProductEntity product = new ProductEntity();
         product = findById(productModel.getId());
 
         if (productModel.getName() != null) {
-            productValidator.validateName(productModel.getName());
-
             Long count = productRepo.countByName(productModel.getName());
             if (count > 0) {
                 throw new ClientException("Product name is already existed");
@@ -111,20 +80,14 @@ public class ProductService implements Serializable {
         }
 
         if (productModel.getPrice() != null) {
-            productValidator.validatePrice(productModel.getPrice());
-
             product.setPrice(productModel.getPrice());
         }
 
         if (productModel.getStock() != null) {
-            productValidator.validateStock(productModel.getStock());
-
             product.setStock(productModel.getStock());
         }
 
         if (productModel.getCategoryId() != null) {
-            productValidator.validateCategoryId(productModel.getCategoryId());
-
             product.setCategory(
                     categoryRepo.findById(productModel.getCategoryId()).orElse(null));
         }
@@ -135,17 +98,7 @@ public class ProductService implements Serializable {
         return productRepo.save(product);
     }
 
-    public ProductEntity delete(ProductModel productModel)
-            throws ClientException, NotFoundException {
-        // validation
-        productValidator.nullCheckProductId(productModel.getId());
-        productValidator.validateProductId(productModel.getId());
-
-        if (!productRepo.existsById(productModel.getId())) {
-            throw new NotFoundException("Cannot find product with id: " + productModel.getId());
-        }
-
-        // process
+    public ProductEntity delete(ProductModel productModel) throws ClientException {
         ProductEntity product = new ProductEntity();
         product = findById(productModel.getId());
 

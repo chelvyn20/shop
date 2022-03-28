@@ -15,7 +15,7 @@ public class RecordModel {
 
     @Size(min = 1, max = 1, message = "Record Status digit length must be 1", groups = {
             RequestMethodById.class })
-    @Pattern(regexp = "^[A|N]{1}$", groups = { GettingAllByCriteria.class,
+    @Pattern(regexp = "^[AN]{1}$", groups = { GettingAllByCriteria.class,
             RequestMethodById.class })
     private String recStatus;
 

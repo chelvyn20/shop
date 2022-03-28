@@ -7,7 +7,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -17,15 +16,11 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import org.hibernate.annotations.GenericGenerator;
-
 @Entity
 @Table(name = "tx_sale")
 public class SaleEntity {
 
     @Id
-    @GenericGenerator(name = "sale_id_seq", strategy = "id.co.nds.shop.generators.SaleIdGenerator")
-    @GeneratedValue(generator = "sale_id_seq")
     @Column(name = "id")
     private String id;
 
