@@ -1,0 +1,6 @@
+no, attribute, role, type, min, max, unique (false), nullable (true), insertable (true), updatable (true), pattern
+1, id, Primary Key, String, 6, 6, true, false, false, false," ""^(C)[0-9]{5}$"""
+2,name,Column,String,3,50,-,false,-,-,"""^[a-zA-Z]+(?:[\s.]+[a-zA-Z]+)*$"""
+3,price,Column,BigDecimal,-,-,-,false,-,-,BigDecimal default
+4,stock,Column,Integer,-,-,-,false,-,-,Integer default
+5,categoryId,Column,String,-,-,-,false,-,-," ""^(PC)[0-9]{4}$"""
