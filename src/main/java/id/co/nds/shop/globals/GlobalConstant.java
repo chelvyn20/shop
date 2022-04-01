@@ -1,14 +1,26 @@
 package id.co.nds.shop.globals;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import id.co.nds.shop.controllers.ControllerGroup.GettingAll;
+import id.co.nds.shop.controllers.ControllerGroup.GettingAllByCriteria;
+import id.co.nds.shop.controllers.ControllerGroup.PostingNew;
+import id.co.nds.shop.controllers.ControllerGroup.RequestMethodById;
+
 public class GlobalConstant {
     public static final String REC_STATUS_ACTIVE = "A";
     public static final String REC_STATUS_NON_ACTIVE = "N";
 
-    public static final Integer RESPONSE_CODE_SUCCESS_OK = 200;
-    public static final Integer RESPONSE_CODE_CLIENT_ERROR = 400;
-    public static final Integer RESPONSE_CODE_AUTHENTICATION_ERROR = 401;
-    public static final Integer RESPONSE_CODE_AUTHORIZATION_ERROR = 403;
-    public static final Integer RESPONSE_CODE_NOTFOUND_ERROR = 404;
-    public static final Integer RESPONSE_CODE_SERVER_ERROR = 500;
+    public static final Map<Object, String> RESPONSE_STRING_FORMAT = new HashMap<>() {
+        {
+            put(PostingNew.class, "New %s is successfully added");
+            put(GettingAll.class, "%s are successfully obtained");
+            put(GettingAllByCriteria.class, "%s are successfully obtained");
+            put(RequestMethodById.class, "%s is successfully obtained");
+            put(RequestMethodById.class, "%s is successfully updated");
+            put(RequestMethodById.class, "%s is successfully deleted");
+        }
+    };
 
 }

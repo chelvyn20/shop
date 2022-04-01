@@ -24,7 +24,6 @@ import id.co.nds.shop.repos.SaleRepo;
 
 @Service
 public class SaleService implements Serializable {
-
     @Autowired
     public SaleRepo saleRepo;
 

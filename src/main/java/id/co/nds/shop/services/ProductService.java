@@ -15,7 +15,6 @@ import id.co.nds.shop.models.ProductModel;
 import id.co.nds.shop.repos.CategoryRepo;
 import id.co.nds.shop.repos.ProductRepo;
 import id.co.nds.shop.repos.specs.ProductSpec;
-import id.co.nds.shop.validators.ProductValidator;
 
 @Service
 public class ProductService implements Serializable {
@@ -24,8 +23,6 @@ public class ProductService implements Serializable {
 
     @Autowired
     private CategoryRepo categoryRepo;
-
-    ProductValidator productValidator = new ProductValidator();
 
     public ProductEntity add(ProductModel productModel) throws ClientException {
         Long count = productRepo.countByName(productModel.getName());
@@ -111,9 +108,6 @@ public class ProductService implements Serializable {
         product.setDeletedTime(DateGenerator.generateTimestamp());
         product.setDeletedBy(productModel.getActorId() == null ? 0 : productModel.getActorId());
 
-        // return productRepo.save(product);
-
-        productRepo.doDelete(product.getId(), product.getDeletedBy());
-        return product;
+        return productRepo.save(product);
     }
 }

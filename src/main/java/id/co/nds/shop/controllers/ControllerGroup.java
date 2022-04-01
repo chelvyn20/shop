@@ -1,7 +1,10 @@
 package id.co.nds.shop.controllers;
 
 public class ControllerGroup {
+
     public interface PostingNew {}
+
+    public interface GettingAll {}
 
     public interface GettingAllByCriteria {}
 

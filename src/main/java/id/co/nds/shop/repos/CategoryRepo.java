@@ -17,5 +17,4 @@ public interface CategoryRepo extends JpaRepository<CategoryEntity, String>, Jpa
             + GlobalConstant.REC_STATUS_ACTIVE
             + "' AND UPPER(name) = UPPER(:name)", nativeQuery = true)
     long countByName(@Param("name") String name);
-
 }

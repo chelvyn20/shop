@@ -19,7 +19,6 @@ import id.co.nds.shop.keys.SaleProductKey;
 @Entity
 @Table(name = "sale_product")
 public class SaleProductEntity {
-
     @EmbeddedId
     private SaleProductKey id;
 

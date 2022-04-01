@@ -14,11 +14,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import id.co.nds.shop.controllers.ControllerGroup.DeletingById;
+import id.co.nds.shop.controllers.ControllerGroup.GettingAll;
 import id.co.nds.shop.controllers.ControllerGroup.GettingAllByCriteria;
+import id.co.nds.shop.controllers.ControllerGroup.GettingById;
 import id.co.nds.shop.controllers.ControllerGroup.PostingNew;
+import id.co.nds.shop.controllers.ControllerGroup.PuttingById;
 import id.co.nds.shop.controllers.ControllerGroup.RequestMethodById;
 import id.co.nds.shop.entities.CategoryEntity;
 import id.co.nds.shop.exceptions.ClientException;
+import id.co.nds.shop.generators.ResponseGenerator;
 import id.co.nds.shop.models.CategoryModel;
 import id.co.nds.shop.models.ResponseModel;
 import id.co.nds.shop.services.CategoryService;
@@ -37,10 +41,8 @@ public class CategoryController {
         CategoryEntity category = categoryService.add(categoryModel);
 
         // response
-        ResponseModel response = new ResponseModel();
-        response.setMsg("New category is successfully added");
-        response.setData(category);
-        return ResponseEntity.ok(response);
+        String className = category.getClass().getSimpleName();
+        return new ResponseGenerator(category, className, PostingNew.class).getResponse();
     }
 
     @GetMapping(value = "/get/all")
@@ -49,10 +51,8 @@ public class CategoryController {
         List<CategoryEntity> categories = categoryService.findAll();
 
         // response
-        ResponseModel response = new ResponseModel();
-        response.setMsg("Request successfully");
-        response.setData(categories);
-        return ResponseEntity.ok(response);
+        String className = categories.get(0).getClass().getSimpleName();
+        return new ResponseGenerator(categories, className, GettingAll.class).getResponse();
     }
 
     @GetMapping(value = "/get/search")
@@ -62,37 +62,32 @@ public class CategoryController {
         List<CategoryEntity> categories = categoryService.findAllByCriteria(categoryModel);
 
         // response
-        ResponseModel response = new ResponseModel();
-        response.setMsg("Request successfully");
-        response.setData(categories);
-        return ResponseEntity.ok(response);
+        String className = categories.get(0).getClass().getSimpleName();
+        return new ResponseGenerator(categories, className, GettingAllByCriteria.class)
+                .getResponse();
     }
 
     @GetMapping(value = "/get")
     public ResponseEntity<ResponseModel> getCategoryByIdController(
-            @Validated(DeletingById.class) @RequestBody CategoryModel categoryModel) {
+            @Validated(GettingById.class) @RequestBody CategoryModel categoryModel) {
         // request
         CategoryEntity category = categoryService.findById(categoryModel.getId());
 
         // response
-        ResponseModel response = new ResponseModel();
-        response.setMsg("Request successfully");
-        response.setData(category);
-        return ResponseEntity.ok(response);
+        String className = category.getClass().getSimpleName();
+        return new ResponseGenerator(category, className, RequestMethodById.class).getResponse();
     }
 
     @PutMapping(value = "/update")
     public ResponseEntity<ResponseModel> putCategoryController(
-            @Validated(RequestMethodById.class) @RequestBody CategoryModel categoryModel)
+            @Validated(PuttingById.class) @RequestBody CategoryModel categoryModel)
             throws ClientException {
         // request
         CategoryEntity category = categoryService.edit(categoryModel);
 
         // response
-        ResponseModel response = new ResponseModel();
-        response.setMsg("Category is successfully updated");
-        response.setData(category);
-        return ResponseEntity.ok(response);
+        String className = category.getClass().getSimpleName();
+        return new ResponseGenerator(category, className, RequestMethodById.class).getResponse();
     }
 
     @DeleteMapping("/delete")
@@ -103,9 +98,7 @@ public class CategoryController {
         CategoryEntity category = categoryService.delete(categoryModel);
 
         // response
-        ResponseModel response = new ResponseModel();
-        response.setMsg("Category is successfully deleted");
-        response.setData(category);
-        return ResponseEntity.ok(response);
+        String className = category.getClass().getSimpleName();
+        return new ResponseGenerator(category, className, RequestMethodById.class).getResponse();
     }
 }

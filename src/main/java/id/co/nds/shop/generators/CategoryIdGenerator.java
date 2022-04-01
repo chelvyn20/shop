@@ -34,5 +34,4 @@ public class CategoryIdGenerator implements IdentifierGenerator {
         }
         return null;
     }
-
 }
