@@ -18,8 +18,7 @@ import id.co.nds.shop.controllers.ControllerGroup.GettingAll;
 import id.co.nds.shop.controllers.ControllerGroup.GettingAllByCriteria;
 import id.co.nds.shop.controllers.ControllerGroup.GettingById;
 import id.co.nds.shop.controllers.ControllerGroup.PostingNew;
-import id.co.nds.shop.controllers.ControllerGroup.PuttingById;
-import id.co.nds.shop.controllers.ControllerGroup.RequestMethodById;
+import id.co.nds.shop.controllers.ControllerGroup.UpdatingById;
 import id.co.nds.shop.entities.CategoryEntity;
 import id.co.nds.shop.exceptions.ClientException;
 import id.co.nds.shop.generators.ResponseGenerator;
@@ -75,19 +74,19 @@ public class CategoryController {
 
         // response
         String className = category.getClass().getSimpleName();
-        return new ResponseGenerator(category, className, RequestMethodById.class).getResponse();
+        return new ResponseGenerator(category, className, GettingById.class).getResponse();
     }
 
     @PutMapping(value = "/update")
     public ResponseEntity<ResponseModel> putCategoryController(
-            @Validated(PuttingById.class) @RequestBody CategoryModel categoryModel)
+            @Validated(UpdatingById.class) @RequestBody CategoryModel categoryModel)
             throws ClientException {
         // request
         CategoryEntity category = categoryService.edit(categoryModel);
 
         // response
         String className = category.getClass().getSimpleName();
-        return new ResponseGenerator(category, className, RequestMethodById.class).getResponse();
+        return new ResponseGenerator(category, className, UpdatingById.class).getResponse();
     }
 
     @DeleteMapping("/delete")
@@ -99,6 +98,6 @@ public class CategoryController {
 
         // response
         String className = category.getClass().getSimpleName();
-        return new ResponseGenerator(category, className, RequestMethodById.class).getResponse();
+        return new ResponseGenerator(category, className, DeletingById.class).getResponse();
     }
 }

@@ -1,7 +1,6 @@
 package id.co.nds.shop.controllers;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import id.co.nds.shop.controllers.ControllerGroup.PostingNew;
 import id.co.nds.shop.controllers.ControllerGroup.DeletingById;
+import id.co.nds.shop.controllers.ControllerGroup.GettingAll;
 import id.co.nds.shop.controllers.ControllerGroup.GettingAllByCriteria;
-import id.co.nds.shop.controllers.ControllerGroup.RequestMethodById;
+import id.co.nds.shop.controllers.ControllerGroup.GettingById;
+import id.co.nds.shop.controllers.ControllerGroup.UpdatingById;
 import id.co.nds.shop.entities.CustomerEntity;
 import id.co.nds.shop.exceptions.ClientException;
+import id.co.nds.shop.generators.ResponseGenerator;
 import id.co.nds.shop.models.CustomerModel;
 import id.co.nds.shop.models.ResponseModel;
 import id.co.nds.shop.services.CustomerService;
@@ -38,10 +40,8 @@ public class CustomerController {
         CustomerEntity customer = customerService.add(customerModel);
 
         // response
-        ResponseModel response = new ResponseModel();
-        response.setMsg("New customer is successfully added");
-        response.setData(customer);
-        return ResponseEntity.ok(response);
+        String className = customer.getClass().getSimpleName();
+        return new ResponseGenerator(customer, className, PostingNew.class).getResponse();
     }
 
     @GetMapping(value = "/get/all")
@@ -50,10 +50,8 @@ public class CustomerController {
         List<CustomerEntity> customers = customerService.findAll();
 
         // response
-        ResponseModel response = new ResponseModel();
-        response.setMsg("Request successfully");
-        response.setData(customers);
-        return ResponseEntity.ok(response);
+        String className = customers.get(0).getClass().getSimpleName();
+        return new ResponseGenerator(customers, className, GettingAll.class).getResponse();
     }
 
     @GetMapping(value = "/get/search")
@@ -63,37 +61,31 @@ public class CustomerController {
         List<CustomerEntity> customers = customerService.findAllByCriteria(customerModel);
 
         // response
-        ResponseModel response = new ResponseModel();
-        response.setMsg("Request successfully");
-        response.setData(customers);
-        return ResponseEntity.ok(response);
+        String className = customers.get(0).getClass().getSimpleName();
+        return new ResponseGenerator(customers, className, GettingAllByCriteria.class)
+                .getResponse();
     }
 
     @GetMapping(value = "/get")
     public ResponseEntity<ResponseModel> getCustomerByIdController(
-            @Validated(DeletingById.class) @RequestBody CustomerModel customerModel) {
+            @Validated(GettingById.class) @RequestBody CustomerModel customerModel) {
         // request
         CustomerEntity customer = customerService.findById(customerModel.getId());
 
         // response
-        ResponseModel response = new ResponseModel();
-        response.setMsg("Request successfully");
-        response.setData(customer);
-        return ResponseEntity.ok(response);
+        String className = customer.getClass().getSimpleName();
+        return new ResponseGenerator(customer, className, GettingById.class).getResponse();
     }
 
     @PutMapping(value = "/update")
     public ResponseEntity<ResponseModel> putCustomerController(
-            @Validated(RequestMethodById.class) @RequestBody CustomerModel customerModel)
-            throws NoSuchElementException {
+            @Validated(UpdatingById.class) @RequestBody CustomerModel customerModel) {
         // request
         CustomerEntity customer = customerService.edit(customerModel);
 
         // response
-        ResponseModel response = new ResponseModel();
-        response.setMsg("Customer is successfully updated");
-        response.setData(customer);
-        return ResponseEntity.ok(response);
+        String className = customer.getClass().getSimpleName();
+        return new ResponseGenerator(customer, className, UpdatingById.class).getResponse();
     }
 
     @DeleteMapping("/delete")
@@ -104,10 +96,7 @@ public class CustomerController {
         CustomerEntity customer = customerService.delete(customerModel);
 
         // response
-        ResponseModel response = new ResponseModel();
-        response.setMsg("Customer is successfully deleted");
-        response.setData(customer);
-        return ResponseEntity.ok(response);
-
+        String className = customer.getClass().getSimpleName();
+        return new ResponseGenerator(customer, className, DeletingById.class).getResponse();
     }
 }

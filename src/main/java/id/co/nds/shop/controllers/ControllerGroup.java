@@ -10,7 +10,7 @@ public class ControllerGroup {
 
     public interface GettingById extends RequestMethodById {}
 
-    public interface PuttingById extends RequestMethodById {}
+    public interface UpdatingById extends RequestMethodById {}
 
     public interface DeletingById extends RequestMethodById {}
 

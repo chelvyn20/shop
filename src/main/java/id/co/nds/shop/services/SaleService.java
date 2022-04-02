@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +37,7 @@ public class SaleService implements Serializable {
     @Autowired
     public CustomerRepo customerRepo;
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_USER')")
     @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = { Exception.class })
     public SaleEntity addSale(SaleModel saleModel) throws Exception {
         SaleEntity sale = new SaleEntity();

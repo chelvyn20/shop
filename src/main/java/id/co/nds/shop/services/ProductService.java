@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import id.co.nds.shop.entities.ProductEntity;
@@ -24,6 +25,7 @@ public class ProductService implements Serializable {
     @Autowired
     private CategoryRepo categoryRepo;
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_USER')")
     public ProductEntity add(ProductModel productModel) throws ClientException {
         Long count = productRepo.countByName(productModel.getName());
         if (count > 0) {
@@ -42,6 +44,7 @@ public class ProductService implements Serializable {
         return productRepo.save(product);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_USER')")
     public List<ProductEntity> findAll() {
         List<ProductEntity> products = new ArrayList<>();
         productRepo.findAll().forEach(products::add);
@@ -49,6 +52,7 @@ public class ProductService implements Serializable {
         return products;
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_USER')")
     public List<ProductEntity> findAllByCriteria(ProductModel productModel) {
         List<ProductEntity> products = new ArrayList<>();
         ProductSpec specs = new ProductSpec(productModel);
@@ -57,12 +61,14 @@ public class ProductService implements Serializable {
         return products;
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_USER')")
     public ProductEntity findById(String id) {
         ProductEntity product = productRepo.findById(id).orElseThrow();
 
         return product;
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_USER')")
     public ProductEntity edit(ProductModel productModel) throws ClientException {
         ProductEntity product = new ProductEntity();
         product = findById(productModel.getId());
@@ -95,13 +101,14 @@ public class ProductService implements Serializable {
         return productRepo.save(product);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ProductEntity delete(ProductModel productModel) throws ClientException {
         ProductEntity product = new ProductEntity();
         product = findById(productModel.getId());
 
         if (product.getRecStatus().equalsIgnoreCase(GlobalConstant.REC_STATUS_NON_ACTIVE)) {
             throw new ClientException(
-                    "Product id (" + productModel.getId() + ") is already been deleted.");
+                    "Product with id (" + productModel.getId() + ") is already been deleted.");
         }
 
         product.setRecStatus(GlobalConstant.REC_STATUS_NON_ACTIVE);

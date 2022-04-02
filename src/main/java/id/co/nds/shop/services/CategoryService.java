@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import id.co.nds.shop.entities.CategoryEntity;
@@ -20,6 +21,7 @@ public class CategoryService implements Serializable {
     @Autowired
     private CategoryRepo categoryRepo;
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_USER')")
     public CategoryEntity add(CategoryModel categoryModel) throws ClientException {
         Long count = categoryRepo.countByName(categoryModel.getName());
         if (count > 0) {
@@ -36,6 +38,7 @@ public class CategoryService implements Serializable {
         return categoryRepo.save(category);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_USER')")
     public List<CategoryEntity> findAll() {
         List<CategoryEntity> categories = new ArrayList<>();
         categoryRepo.findAll().forEach(categories::add);
@@ -43,6 +46,7 @@ public class CategoryService implements Serializable {
         return categories;
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_USER')")
     public List<CategoryEntity> findAllByCriteria(CategoryModel categoryModel) {
         List<CategoryEntity> categories = new ArrayList<>();
         CategorySpec specs = new CategorySpec(categoryModel);
@@ -51,12 +55,14 @@ public class CategoryService implements Serializable {
         return categories;
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_USER')")
     public CategoryEntity findById(String id) {
         CategoryEntity category = categoryRepo.findById(id).orElseThrow();
 
         return category;
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_USER')")
     public CategoryEntity edit(CategoryModel categoryModel) throws ClientException {
         CategoryEntity category = new CategoryEntity();
         category = findById(categoryModel.getId());
@@ -77,13 +83,14 @@ public class CategoryService implements Serializable {
         return categoryRepo.save(category);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public CategoryEntity delete(CategoryModel categoryModel) throws ClientException {
         CategoryEntity category = new CategoryEntity();
         category = findById(categoryModel.getId());
 
         if (category.getRecStatus().equalsIgnoreCase(GlobalConstant.REC_STATUS_NON_ACTIVE)) {
             throw new ClientException(
-                    "Category id (" + categoryModel.getId() + ") is already been deleted.");
+                    "Category with id (" + categoryModel.getId() + ") is already been deleted.");
         }
 
         category.setRecStatus(GlobalConstant.REC_STATUS_NON_ACTIVE);

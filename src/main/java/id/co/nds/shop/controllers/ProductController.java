@@ -14,12 +14,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import id.co.nds.shop.controllers.ControllerGroup.DeletingById;
+import id.co.nds.shop.controllers.ControllerGroup.GettingAll;
 import id.co.nds.shop.controllers.ControllerGroup.GettingAllByCriteria;
 import id.co.nds.shop.controllers.ControllerGroup.GettingById;
 import id.co.nds.shop.controllers.ControllerGroup.PostingNew;
-import id.co.nds.shop.controllers.ControllerGroup.PuttingById;
+import id.co.nds.shop.controllers.ControllerGroup.UpdatingById;
 import id.co.nds.shop.entities.ProductEntity;
 import id.co.nds.shop.exceptions.ClientException;
+import id.co.nds.shop.generators.ResponseGenerator;
 import id.co.nds.shop.models.ProductModel;
 import id.co.nds.shop.models.ResponseModel;
 import id.co.nds.shop.services.ProductService;
@@ -38,10 +40,8 @@ public class ProductController {
         ProductEntity product = productService.add(productModel);
 
         // response
-        ResponseModel response = new ResponseModel();
-        response.setMsg("New product is successfully added");
-        response.setData(product);
-        return ResponseEntity.ok(response);
+        String className = product.getClass().getSimpleName();
+        return new ResponseGenerator(product, className, PostingNew.class).getResponse();
     }
 
     @GetMapping(value = "/get/all")
@@ -50,10 +50,8 @@ public class ProductController {
         List<ProductEntity> products = productService.findAll();
 
         // response
-        ResponseModel response = new ResponseModel();
-        response.setMsg("Request successfully");
-        response.setData(products);
-        return ResponseEntity.ok(response);
+        String className = products.get(0).getClass().getSimpleName();
+        return new ResponseGenerator(products, className, GettingAll.class).getResponse();
     }
 
     @GetMapping(value = "/get/search")
@@ -63,10 +61,9 @@ public class ProductController {
         List<ProductEntity> products = productService.findAllByCriteria(productModel);
 
         // response
-        ResponseModel response = new ResponseModel();
-        response.setMsg("Request successfully");
-        response.setData(products);
-        return ResponseEntity.ok(response);
+        String className = products.get(0).getClass().getSimpleName();
+        return new ResponseGenerator(products, className, GettingAllByCriteria.class)
+                .getResponse();
     }
 
     @GetMapping(value = "/get")
@@ -76,24 +73,20 @@ public class ProductController {
         ProductEntity product = productService.findById(productModel.getId());
 
         // response
-        ResponseModel response = new ResponseModel();
-        response.setMsg("Request successfully");
-        response.setData(product);
-        return ResponseEntity.ok(response);
+        String className = product.getClass().getSimpleName();
+        return new ResponseGenerator(product, className, GettingById.class).getResponse();
     }
 
     @PutMapping(value = "/update")
     public ResponseEntity<ResponseModel> putProductController(
-            @Validated(PuttingById.class) @RequestBody ProductModel productModel)
+            @Validated(UpdatingById.class) @RequestBody ProductModel productModel)
             throws ClientException {
         // request
         ProductEntity product = productService.edit(productModel);
 
         // response
-        ResponseModel response = new ResponseModel();
-        response.setMsg("Product is successfully updated");
-        response.setData(product);
-        return ResponseEntity.ok(response);
+        String className = product.getClass().getSimpleName();
+        return new ResponseGenerator(product, className, UpdatingById.class).getResponse();
     }
 
     @DeleteMapping("/delete")
@@ -104,10 +97,8 @@ public class ProductController {
         ProductEntity product = productService.delete(productModel);
 
         // response
-        ResponseModel response = new ResponseModel();
-        response.setMsg("Product is successfully deleted");
-        response.setData(product);
-        return ResponseEntity.ok(response);
+        String className = product.getClass().getSimpleName();
+        return new ResponseGenerator(product, className, DeletingById.class).getResponse();
     }
 
 }

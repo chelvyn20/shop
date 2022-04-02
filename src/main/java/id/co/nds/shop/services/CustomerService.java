@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import id.co.nds.shop.entities.CustomerEntity;
@@ -20,6 +21,7 @@ public class CustomerService implements Serializable {
     @Autowired
     private CustomerRepo customerRepo;
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_USER')")
     public CustomerEntity add(CustomerModel customerModel) throws ClientException {
         Long count = customerRepo.countByName(customerModel.getName());
         if (count > 0) {
@@ -38,6 +40,7 @@ public class CustomerService implements Serializable {
 
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_USER')")
     public List<CustomerEntity> findAll() {
         List<CustomerEntity> customers = new ArrayList<>();
         customerRepo.findAll().forEach(customers::add);
@@ -45,6 +48,7 @@ public class CustomerService implements Serializable {
         return customers;
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_USER')")
     public List<CustomerEntity> findAllByCriteria(CustomerModel customerModel) {
         List<CustomerEntity> customers = new ArrayList<>();
         CustomerSpec specs = new CustomerSpec(customerModel);
@@ -53,12 +57,14 @@ public class CustomerService implements Serializable {
         return customers;
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_USER')")
     public CustomerEntity findById(String id) {
         CustomerEntity customer = customerRepo.findById(id).orElseThrow();
 
         return customer;
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public CustomerEntity edit(CustomerModel customerModel) {
         CustomerEntity customer = new CustomerEntity();
         customer = findById(customerModel.getId());
@@ -78,13 +84,14 @@ public class CustomerService implements Serializable {
         return customerRepo.save(customer);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public CustomerEntity delete(CustomerModel customerModel) throws ClientException {
         CustomerEntity customer = new CustomerEntity();
         customer = findById(customerModel.getId());
 
         if (customer.getRecStatus().equalsIgnoreCase(GlobalConstant.REC_STATUS_NON_ACTIVE)) {
             throw new ClientException(
-                    "Customer id (" + customerModel.getId() + ") is already been deleted.");
+                    "Customer with id (" + customerModel.getId() + ") is already been deleted.");
         }
         customer.setRecStatus(GlobalConstant.REC_STATUS_NON_ACTIVE);
         customer.setDeletedTime(DateGenerator.generateTimestamp());
