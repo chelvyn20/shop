@@ -16,8 +16,6 @@ import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
-import org.hibernate.annotations.ColumnTransformer;
-
 @Entity
 @Table(name = "ms_user")
 public class UserEntity {

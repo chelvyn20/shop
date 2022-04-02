@@ -46,11 +46,10 @@ public class SaleProductEntity {
     @Column(name = "quantity")
     private Integer quantity;
 
-    public SaleProductEntity() {
-    }
+    public SaleProductEntity() {}
 
-    public SaleProductEntity(SaleEntity sale, ProductEntity product, CategoryEntity category, BigDecimal price,
-            Integer quantity) {
+    public SaleProductEntity(SaleEntity sale, ProductEntity product, CategoryEntity category,
+            BigDecimal price, Integer quantity) {
         this.id = new SaleProductKey(sale.getId(), product.getId(), category.getId());
         this.sale = sale;
         this.product = product;
